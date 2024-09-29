@@ -1,5 +1,17 @@
 from header import *
 
+# Definir struct Polinomio
+class Polinomio:
+    def __init__(self, N):
+        self.input = [''] * N  # campo de caracteres
+        self.sinal = None      # campo de sinal
+        self.v = np.zeros(N, dtype=int)   # vetor de inteiros
+        self.r = np.zeros(N, dtype=float) # vetor de floats
+        self.coe = 0  # coeficiente
+        self.exp = 0  # expoente
+        self.grau = 0 # grau
+        self.nR = 0   # número de raízes
+
 def inicio():
     
     # Exibir uma imagem a partir de um arquivo local
@@ -197,22 +209,6 @@ def pagina_grafo():
 
     # Exibir o grafo no Streamlit
     st.pyplot(plt)
-
-# Importações
-import streamlit as st
-import numpy as np
-
-# Definir struct Polinomio
-class Polinomio:
-    def __init__(self, N):
-        self.input = [''] * N  # campo de caracteres
-        self.sinal = None      # campo de sinal
-        self.v = np.zeros(N, dtype=int)   # vetor de inteiros
-        self.r = np.zeros(N, dtype=float) # vetor de floats
-        self.coe = 0  # coeficiente
-        self.exp = 0  # expoente
-        self.grau = 0 # grau
-        self.nR = 0   # número de raízes
 
 # Função Streamlit para exibir informações da struct Polinomio
 def exibir_polinomio():
