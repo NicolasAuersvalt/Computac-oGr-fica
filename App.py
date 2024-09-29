@@ -248,15 +248,15 @@ def cifra():
 def main():
     # Menu lateral para selecionar páginas
     menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo", "Cifra de Hill"]
-    escolha = st.sidebar.selectbox("Escolha uma página", menu)
+    escolha = st.sidebar.selectbox("Escolha a página:", ["Início", "Operações", "Grafo", "Cifra de Hill"])
 
     if escolha == "Início":
         inicio()
-    elif escolha == "Computação Gráfica":
+    elif escolha == "Operações":
         pagina_operacoes()
-    elif escolha == "Busca de Caminhos em Grafo":
+    elif escolha == "Grafo":
         pagina_grafo()
-    elif escolha == "Cifra de Hill"
+    elif escolha == "Cifra de Hill":
         cifra()
 
 if __name__ == "__main__":
