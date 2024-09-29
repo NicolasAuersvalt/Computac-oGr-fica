@@ -198,6 +198,56 @@ def pagina_grafo():
     # Exibir o grafo no Streamlit
     st.pyplot(plt)
 
+# Importações
+import streamlit as st
+import numpy as np
+
+# Definir struct Polinomio
+class Polinomio:
+    def __init__(self, N):
+        self.input = [''] * N  # campo de caracteres
+        self.sinal = None      # campo de sinal
+        self.v = np.zeros(N, dtype=int)   # vetor de inteiros
+        self.r = np.zeros(N, dtype=float) # vetor de floats
+        self.coe = 0  # coeficiente
+        self.exp = 0  # expoente
+        self.grau = 0 # grau
+        self.nR = 0   # número de raízes
+
+# Função Streamlit para exibir informações da struct Polinomio
+def exibir_polinomio():
+    st.title("Polinômio")
+    
+    # Inputs para o Polinomio
+    grau = st.number_input("Digite o grau do polinômio:", min_value=1, step=1)
+    
+    # Inicializa a struct
+    pol = Polinomio(grau)
+    
+    # Coletar valores
+    pol.input = st.text_input("Entrada de polinômio:")
+    pol.sinal = st.text_input("Sinal:")
+    pol.coe = st.number_input("Coeficiente:", step=1)
+    pol.exp = st.number_input("Expoente:", step=1)
+    pol.nR = st.number_input("Número de raízes:", step=1)
+    
+    # Preencher vetores
+    for i in range(grau):
+        pol.v[i] = st.number_input(f"v[{i}]:", step=1)
+        pol.r[i] = st.number_input(f"r[{i}]:", format="%.2f")
+
+    # Exibir polinômio
+    st.write("### Dados do Polinômio:")
+    st.write(f"Entrada: {''.join(pol.input)}")
+    st.write(f"Sinal: {pol.sinal}")
+    st.write(f"Coeficiente: {pol.coe}")
+    st.write(f"Expoente: {pol.exp}")
+    st.write(f"Grau: {pol.grau}")
+    st.write(f"Número de Raízes: {pol.nR}")
+    st.write(f"Vetor v: {pol.v}")
+    st.write(f"Vetor r: {pol.r}")
+
+
 def cifra():
     st.title("Cifra de Hill")
 
@@ -255,7 +305,7 @@ def cifra():
 
 def main():
     # Menu lateral para selecionar páginas
-    menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo", "Criptografia"]
+    menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo", "Criptografia", "Polinômios"]
     escolha = st.sidebar.selectbox("Escolha a página:", menu)  # Use a lista 'menu' aqui
 
     if escolha == "Início":
@@ -266,6 +316,8 @@ def main():
         pagina_grafo()
     elif escolha == "Criptografia":
         cifra()
+    elif escolha == "Polinômios":
+        exibir_polinomio()
 
 if __name__ == "__main__":
     main()
