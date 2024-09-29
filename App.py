@@ -73,7 +73,8 @@ def inicio():
             - Quinto, repete-se o último elemento da mensagem R vezes (ex.: teste -> testeee).
             - Sexto, converte-se os agrupamentos para os equivalentes do alfabeto (A = 1, B = 2, ...), como em P=[A,B] => P=[1,2].
             - Sétimo, realiza-se o produto de cada agrupamento Pi pela Matriz Codificadora e armazena-se em um vetor C: C = MC * Pi.
-            - Oitavo, o vetor C (codificado) é de dimensão 1xN; logo, unem-se todos os vetores codificados e forma-se o código.
+            - Oitavo, o vetor C (codificado) é de dimensão 1xN; logo, unem-se todos os vetores codificados e forma-se o código para converter para o alfabeto.
+            - OBS: não inserir matriz diagonal na MC e nem matriz nula.
     """)
 
 
