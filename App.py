@@ -182,9 +182,72 @@ def pagina_grafo():
     # Exibir o grafo no Streamlit
     st.pyplot(plt)
 
+# Função para cifra de Hill
+def cifra():
+    st.title("Cifra de Hill")
+
+    # Recebe o grau da matriz
+    grau = st.number_input("Digite o Grau da Matriz:", min_value=2, step=1)
+
+    # Recebe a senha
+    senha = st.text_input("Digite a String (letras e espaços serão removidos):")
+
+    if senha:
+        # Remover espaços da string
+        senhaSemEspacos = ''.join([c for c in senha if c != ' '])
+
+        # Cria a matriz codificadora (grau x grau)
+        matT = np.zeros((grau, grau), dtype=int)
+
+        # Recebe a matriz de transformação (CHAVE)
+        st.write("Digite a Matriz Codificadora:")
+        for i in range(grau):
+            matT[i] = st.text_input(f"Linha {i + 1} (valores separados por espaço):", key=f"linha_{i}").split()
+
+        # Verificar se todos os campos da matriz foram preenchidos corretamente
+        if any('' in row for row in matT):
+            st.error("Preencha todos os valores da matriz.")
+            return
+
+        # Conversão para inteiros
+        matT = matT.astype(int)
+
+        # Analisa o resto
+        tamSenha = len(senhaSemEspacos)
+        resto = tamSenha % grau
+
+        # Se não for divisível, preenche com o último caractere
+        if resto != 0:
+            ultimo = senhaSemEspacos[-1]  # Pega o último elemento
+            senhaSemEspacos += ultimo * (grau - resto)  # Preenche com o último caractere
+
+        criptografado = []
+
+        # Percorrer todos os agrupamentos
+        for i in range(0, len(senhaSemEspacos), grau):
+            agrupamento = [(ord(senhaSemEspacos[i + j]) - ord('A') + 1) for j in range(grau)]
+
+            # Produto da matriz com o vetor agrupamento
+            for m in range(grau):
+                produto = sum(matT[m][n] * agrupamento[n] for n in range(grau))
+
+                # Aplicar módulo 26 para manter dentro do intervalo do alfabeto
+                produto = produto % 26
+                if produto == 0:
+                    produto = 26  # Ajusta para que 0 corresponda a 'Z'
+
+                criptografado.append(produto)
+
+        # Exibe o resultado criptografado
+        st.write("Criptografado: ")
+        resultado = ''.join(chr(num + ord('A') - 1) for num in criptografado)
+        st.success(f"Resultado Criptografado: {resultado}")
+
+
+
 def main():
     # Menu lateral para selecionar páginas
-    menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo"]
+    menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo", "Cifra de Hill"]
     escolha = st.sidebar.selectbox("Escolha uma página", menu)
 
     if escolha == "Início":
@@ -193,6 +256,8 @@ def main():
         pagina_operacoes()
     elif escolha == "Busca de Caminhos em Grafo":
         pagina_grafo()
+    elif escolha == "Cifra de Hill"
+        cifra()
 
 if __name__ == "__main__":
     main()
