@@ -259,9 +259,9 @@ def main():
 
     if escolha == "Início":
         inicio()
-    elif escolha == "Operações":
+    elif escolha == "Computação Gráfica":
         pagina_operacoes()
-    elif escolha == "Grafo":
+    elif escolha == "Busca de Caminhos em Grafo":
         pagina_grafo()
     elif escolha == "Criptografia":
         cifra()
