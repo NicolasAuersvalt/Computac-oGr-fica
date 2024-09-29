@@ -61,6 +61,21 @@ def inicio():
         - **Oitavo:** MR é uma matriz de dimensão 3 x N, então para cada coluna, plota um vértice.
     """)
 
+    st.subheader("Criptografia (Cifra de Hill de ordem N)")
+
+    st.write("""
+        O intuito é codificar uma mensagem e manter a matriz codificadora (chave) para descriptografá-la futuramente.
+        - **Cifra de Hill:**
+            - Primeiro, recebe-se a ordem (N) da Cifra de Hill, que será a ordem da matriz codificadora.
+            - Segundo, recebe-se a Matriz Codificadora NxN (MC) e a mensagem a ser criptografada (sem considerar espaços).
+            - Terceiro, agrupam-se as letras em função da ordem desejada (ex.: ordem 2, agrupa pares).
+            - Quarto, caso o tamanho da mensagem não seja divisível pela ordem desejada, armazena-se o resto (R) da divisão do tamanho pela ordem.
+            - Quinto, repete-se o último elemento da mensagem R vezes (ex.: teste -> testeee).
+            - Sexto, converte-se os agrupamentos para os equivalentes do alfabeto (A = 1, B = 2, ...), como em P=[A,B] => P=[1,2].
+            - Sétimo, realiza-se o produto de cada agrupamento Pi pela Matriz Codificadora e armazena-se em um vetor C: C = MC * Pi.
+            - Oitavo, o vetor C (codificado) é de dimensão 1xN; logo, unem-se todos os vetores codificados e forma-se o código.
+    """)
+
 
 
 
@@ -182,44 +197,42 @@ def pagina_grafo():
     # Exibir o grafo no Streamlit
     st.pyplot(plt)
 
-# Função para cifra de Hill
 def cifra():
     st.title("Cifra de Hill")
 
-    # Recebe o grau da matriz
-    grau = st.number_input("Digite o Grau da Matriz:", min_value=2, step=1)
+    # Receber o grau
+    grau = st.number_input("Digite o Grau:", min_value=1, step=1)
 
-    # Recebe a senha
-    senha = st.text_input("Digite a String (letras e espaços serão removidos):")
+    # Receber a matriz de transformação (CHAVE) como texto
+    matriz_input = st.text_area("Digite a Matriz Codificadora (linha por linha, separados por espaços):")
+    
+    # Processar a entrada da matriz
+    if matriz_input:
+        matT = []
+        linhas = matriz_input.strip().split('\n')
+        for linha in linhas:
+            matT.append(list(map(int, linha.split())))
+        
+        matT = np.array(matT)
 
-    if senha:
-        # Remover espaços da string
-        senhaSemEspacos = ''.join([c for c in senha if c != ' '])
-
-        # Cria a matriz codificadora (grau x grau)
-        matT = np.zeros((grau, grau), dtype=int)
-
-        # Recebe a matriz de transformação (CHAVE)
-        st.write("Digite a Matriz Codificadora:")
-        for i in range(grau):
-            matT[i] = st.text_input(f"Linha {i + 1} (valores separados por espaço):", key=f"linha_{i}").split()
-
-        # Verificar se todos os campos da matriz foram preenchidos corretamente
-        if any('' in row for row in matT):
-            st.error("Preencha todos os valores da matriz.")
+        if matT.shape != (grau, grau):
+            st.error("A matriz deve ser de dimensão {}x{}.".format(grau, grau))
             return
 
-        # Conversão para inteiros
-        matT = matT.astype(int)
+        # Receber a senha
+        senha = st.text_area("Digite a String (letras e espaços serão removidos):")
 
-        # Analisa o resto
+        # Remover espaços da string
+        senhaSemEspacos = ''.join(c for c in senha.upper() if c.isalpha())
+
+        # Analisar o Resto
         tamSenha = len(senhaSemEspacos)
         resto = tamSenha % grau
 
         # Se não for divisível, preenche com o último caractere
         if resto != 0:
             ultimo = senhaSemEspacos[-1]  # Pega o último elemento
-            senhaSemEspacos += ultimo * (grau - resto)  # Preenche com o último caractere
+            senhaSemEspacos += ultimo * (grau - resto)
 
         criptografado = []
 
@@ -227,27 +240,21 @@ def cifra():
         for i in range(0, len(senhaSemEspacos), grau):
             agrupamento = [(ord(senhaSemEspacos[i + j]) - ord('A') + 1) for j in range(grau)]
 
-            # Produto da matriz com o vetor agrupamento
+            # Produto da matriz com vetor agrupamento
             for m in range(grau):
                 produto = sum(matT[m][n] * agrupamento[n] for n in range(grau))
+                produto = produto % 26  # Modular com 26
+                if produto == 0: produto = 26  # Ajusta para que 0 corresponda a 'Z'
+                criptografado.append(produto)  # Armazena o valor criptografado
 
-                # Aplicar módulo 26 para manter dentro do intervalo do alfabeto
-                produto = produto % 26
-                if produto == 0:
-                    produto = 26  # Ajusta para que 0 corresponda a 'Z'
-
-                criptografado.append(produto)
-
-        # Exibe o resultado criptografado
-        st.write("Criptografado: ")
-        resultado = ''.join(chr(num + ord('A') - 1) for num in criptografado)
-        st.success(f"Resultado Criptografado: {resultado}")
-
-
+        # Exibir o resultado criptografado
+        st.subheader("Resultado Criptografado:")
+        resultado = ''.join(chr(c + ord('A') - 1) for c in criptografado)
+        st.write(resultado)
 
 def main():
     # Menu lateral para selecionar páginas
-    menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo", "Cifra de Hill"]
+    menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo", "Criptografia"]
     escolha = st.sidebar.selectbox("Escolha a página:", menu)  # Use a lista 'menu' aqui
 
     if escolha == "Início":
@@ -256,7 +263,7 @@ def main():
         pagina_operacoes()
     elif escolha == "Grafo":
         pagina_grafo()
-    elif escolha == "Cifra de Hill":
+    elif escolha == "Criptografia":
         cifra()
 
 if __name__ == "__main__":
