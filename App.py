@@ -19,6 +19,33 @@ def inicio():
 
     st.title("Bem-vindo ao Laboratório Lambda")
     st.write("Aqui serão desenvolvidos alguns projetos, fique à vontade para testar!")
+    st.markdown("---")
+    st.write("""
+    **Pesquisador Principal: Nícolas Auersvalt Marques**\n
+    - Mentor: Alan Turing
+    - Projetos: Lambda Labs (Website StreamLit), Computação Gráfica, Grafos, Criptografia, Polinômios (assistência)
+    """)
+    st.markdown("[LinkedIn](https://www.linkedin.com/in/nicolas-auersvalt/)" " " "[Portfólio](https://linktr.ee/auersvalt)") 
+    st.markdown("---")
+    st.write("""
+    **Pesquisador Associado: Gabriel Lazari Trevisani**
+    - Mentor: Leonhard Euler
+    - Projetos: Polinômios
+    """)
+    st.markdown("[LinkedIn](https://www.linkedin.com/in/gabriel-trevisani-a811131b5/)")
+    st.markdown("---")
+    st.write("""
+    **Pesquisador Assistente: Pedro Eugenio Marin Do Nascimento**
+    - Mentor: Robert Oppenheimer
+    - Projetos: Grafos (assistência), Criptografia (assistência)
+    """)
+
+    st.markdown("---")
+    st.write("""
+    **Revisor: Guilherme de Souza Carneiro Garcia**
+    """)
+    st.markdown("---")
+    
 
     st.subheader("Grafos")
     st.write("""
@@ -35,7 +62,7 @@ def inicio():
     Vale a pena mencionar que essa abordagem é mais uma curiosidade da teoria dos grafos e pode não ser frequentemente solicitada em exercícios práticos. Além disso, o algoritmo é aplicável apenas a grafos direcionados.
 """)
 
-
+    st.markdown("---")
     st.subheader("Computação Gráfica")
 
     st.write("""
@@ -73,6 +100,8 @@ def inicio():
         - **Oitavo:** MR é uma matriz de dimensão 3 x N, então para cada coluna, plota um vértice.
     """)
 
+    st.markdown("---")
+
     st.subheader("Criptografia (Cifra de Hill de ordem N)")
 
     st.write("""
@@ -88,9 +117,6 @@ def inicio():
             - Oitavo, o vetor C (codificado) é de dimensão 1xN; logo, unem-se todos os vetores codificados e forma-se o código para converter para o alfabeto.
             - OBS: não inserir matriz diagonal na MC e nem matriz nula.
     """)
-
-
-
 
 # Função para as operações
 def pagina_operacoes():
@@ -210,39 +236,165 @@ def pagina_grafo():
     # Exibir o grafo no Streamlit
     st.pyplot(plt)
 
-# Função Streamlit para exibir informações da struct Polinomio
-def exibir_polinomio():
-    st.title("Polinômio")
-    
-    # Inputs para o Polinomio
-    grau = st.number_input("Digite o grau do polinômio:", min_value=1, step=1)
-    
-    # Inicializa a struct
-    pol = Polinomio(grau)
-    
-    # Coletar valores
-    pol.input = st.text_input("Entrada de polinômio:")
-    pol.sinal = st.text_input("Sinal:")
-    pol.coe = st.number_input("Coeficiente:", step=1)
-    pol.exp = st.number_input("Expoente:", step=1)
-    pol.nR = st.number_input("Número de raízes:", step=1)
-    
-    # Preencher vetores
-    for i in range(grau):
-        pol.v[i] = st.number_input(f"v[{i}]:", step=1)
-        pol.r[i] = st.number_input(f"r[{i}]:", format="%.2f")
+class Polinomio:
+    def __init__(self, input_str):
+        self.input = input_str.replace(' ', '')  # Remove espaços
+        self.grau = 0
+        self.v = []
+        self.sinal = []
+        self.r = []
+        self.acha_grau()
+        self.cria_vetor()
 
-    # Exibir polinômio
-    st.write("### Dados do Polinômio:")
-    st.write(f"Entrada: {''.join(pol.input)}")
-    st.write(f"Sinal: {pol.sinal}")
-    st.write(f"Coeficiente: {pol.coe}")
-    st.write(f"Expoente: {pol.exp}")
-    st.write(f"Grau: {pol.grau}")
-    st.write(f"Número de Raízes: {pol.nR}")
-    st.write(f"Vetor v: {pol.v}")
-    st.write(f"Vetor r: {pol.r}")
+    def mod(self, x):
+        return abs(x)
 
+    def sinal_trocado(self, a, b):
+        if b >= 0:
+            return 0 if a >= 0 else 1
+        else:
+            return 1 if a >= 0 else 0
+
+    def lim_pos(self):
+        if self.grau % 2 and self.sinal[self.grau] == '-':
+            return -1.0
+        elif self.grau % 2 and self.sinal[self.grau] == '+':
+            return +1.0
+        elif self.sinal[self.grau] == '+':
+            return +1
+        else:
+            return -1
+
+    def lim_neg(self):
+        if self.grau % 2 and self.sinal[self.grau] == '-':
+            return +1.0
+        elif self.grau % 2 and self.sinal[self.grau] == '+':
+            return -1.0
+        elif self.sinal[self.grau] == '+':
+            return +1
+        else:
+            return -1
+
+    def acha_grau(self):
+        max_grau = 0
+        for i in range(len(self.input)):
+            if self.input[i] == 'x' and max_grau == 0:
+                max_grau = 1
+            if self.input[i] == '^':
+                max_grau = max(max_grau, int(self.input[i + 1]))
+
+        self.grau = max_grau
+        self.v = [0] * (max_grau + 1)
+        self.r = [0.0] * max_grau
+        self.sinal = ['+'] * (max_grau + 1)
+
+    def cria_vetor(self):
+        inf = 0
+        chave = 0
+        while chave < len(self.input):
+            if (self.input[chave] == '+' or self.input[chave] == '-') and chave > 0:
+                self.exp = 0
+                self.coe = 1
+                sup = chave
+                for i in range(inf, sup):
+                    if self.input[i] == 'x':
+                        self.exp = 1
+                    if self.input[i] == '^':
+                        self.exp = int(self.input[i + 1])
+                    if self.input[i] == '*':
+                        self.coe = int(self.input[i - 1])
+
+                if self.input[inf] in ['+', '-']:
+                    self.sinal[self.exp] = self.input[inf]
+                    if self.exp == 0:
+                        self.coe = int(self.input[inf + 1])
+                else:
+                    self.sinal[self.exp] = '+'
+                    if self.exp == 0:
+                        self.coe = int(self.input[inf])
+
+                inf = sup
+                self.v[self.exp] = self.coe
+
+            chave += 1
+
+        # Tratando o último termo após o loop
+        if inf < chave:
+            self.exp = 0
+            self.coe = 1
+            for i in range(inf, chave):
+                if self.input[i] == 'x':
+                    self.exp = 1
+                if self.input[i] == '^':
+                    self.exp = int(self.input[i + 1])
+                if self.input[i] == '*':
+                    self.coe = int(self.input[i - 1])
+
+            if self.input[inf] in ['+', '-']:
+                self.sinal[self.exp] = self.input[inf]
+                if self.exp == 0:
+                    self.coe = int(self.input[inf + 1])
+            else:
+                self.sinal[self.exp] = '+'
+                if self.exp == 0:
+                    self.coe = int(self.input[inf])
+
+            self.v[self.exp] = self.coe
+
+    def ex(self, base, expoente):
+        return base ** expoente
+
+    def valor(self, x):
+        total = self.v[0] if self.sinal[0] == '+' else -self.v[0]
+        for i in range(1, self.grau + 1):
+            total += self.v[i] * self.ex(x, i) if self.sinal[i] == '+' else -self.v[i] * self.ex(x, i)
+        return total
+
+    def derivada(self):
+        d = Polinomio('')
+        d.grau = self.grau - 1
+        d.v = [0] * (d.grau + 1)
+        d.sinal = ['+'] * (d.grau + 1)
+
+        for i in range(d.grau + 1):
+            d.v[i] = self.v[i + 1] * (i + 1)
+            d.sinal[i] = self.sinal[i + 1]
+        return d
+
+    def primitiva(self, x):
+        total = 0
+        for i in range(self.grau + 1):
+            total += (self.v[i] * self.ex(x, i + 1)) / (i + 1) if self.sinal[i] == '+' else -(self.v[i] * self.ex(x, i + 1)) / (i + 1)
+        return total
+
+    def area(self, a, b):
+        return self.primitiva(b) - self.primitiva(a)
+
+    def soma_Riemman(self, a, b, N):
+        dx = (b - a) / N
+        totalm = sum(self.valor(a + i * dx) * dx for i in range(N))
+        totalM = sum(self.valor(a + (i + 1) * dx) * dx for i in range(N))
+        total_medio = sum(self.valor(a + (i + 0.5) * dx) * dx for i in range(N))
+        
+        return totalm, totalM, total_medio
+
+    def aprox(self, x):
+        D = [1.0, 0.5, 0.1]
+        der1 = self.derivada()
+        der2 = der1.derivada()
+
+        results = {}
+        results["P(x)"] = self.valor(x)
+
+        for d in D:
+            linear = self.valor(x - d) + der1.valor(x - d) * d
+            quadratica = (self.valor(x - d) +
+                          der1.valor(x - d) * d +
+                          der2.valor(x - d) * d**2 / 2)
+            results[f'Aproximação linear com d={d}'] = linear
+            results[f'Aproximação quadrática com d={d}'] = quadratica
+        
+        return results
 
 def cifra():
     st.title("Cifra de Hill")
@@ -299,6 +451,37 @@ def cifra():
         resultado = ''.join(chr(c + ord('A') - 1) for c in criptografado)
         st.write(resultado)
 
+def pagina_polinomios():
+    st.title("Calculadora de Polinômios")
+
+    # Solicita ao usuário a entrada do polinômio
+    entrada = st.text_input("Digite o polinômio (exemplo: 2*x^2 - 3*x + 5):")
+    
+    if entrada:
+        polinomio = Polinomio(entrada)
+        opcoes = st.selectbox("Escolha uma operação:", ["Derivada", "Primitiva", "Soma de Riemann", "Aproximação"])
+        
+        if opcoes == "Derivada":
+            resultado = polinomio.derivada()
+            st.write(f"A derivada do polinômio é: {resultado}")
+        
+        elif opcoes == "Primitiva":
+            resultado = polinomio.primitiva()
+            st.write(f"A primitiva do polinômio é: {resultado}")
+        
+        elif opcoes == "Soma de Riemann":
+            a = st.number_input("Digite o limite inferior:", value=0.0)
+            b = st.number_input("Digite o limite superior:", value=1.0)
+            n = st.number_input("Digite o número de subintervalos:", value=10)
+            resultado = polinomio.soma_Riemman(a, b, n)
+            st.write(f"A soma de Riemann é: {resultado}")
+        
+        elif opcoes == "Aproximação":
+            x = st.number_input("Digite o ponto de aproximação:", value=0.0)
+            resultado = polinomio.aprox(x)
+            st.write(f"A aproximação em x={x} é: {resultado}")
+
+
 def main():
     # Menu lateral para selecionar páginas
     menu = ["Início", "Computação Gráfica", "Busca de Caminhos em Grafo", "Criptografia", "Polinômios"]
@@ -313,7 +496,7 @@ def main():
     elif escolha == "Criptografia":
         cifra()
     elif escolha == "Polinômios":
-        exibir_polinomio()
+        pagina_polinomios()
 
 if __name__ == "__main__":
     main()
