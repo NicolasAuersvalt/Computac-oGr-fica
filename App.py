@@ -421,17 +421,13 @@ def cifra():
     if matriz_input:
         matT = []
         linhas = matriz_input.strip().split('\n')
-        try:
-            for linha in linhas:
-                matT.append(list(map(int, linha.split())))
+        for linha in linhas:
+            matT.append(list(map(int, linha.split())))
+        
+        matT = np.array(matT)
 
-            matT = np.array(matT)
-
-            if matT.shape != (grau, grau):
-                st.error("A matriz deve ser de dimensão {}x{}.".format(grau, grau))
-                return
-        except ValueError:
-            st.error("Certifique-se de que todos os valores da matriz são números inteiros válidos.")
+        if matT.shape != (grau, grau):
+            st.error("A matriz deve ser de dimensão {}x{}.".format(grau, grau))
             return
 
         # Receber a senha
@@ -446,7 +442,7 @@ def cifra():
 
         # Se não for divisível, preenche com o último caractere
         if resto != 0:
-            ultimo = senhaSemEspacos[-1]
+            ultimo = senhaSemEspacos[-1]  # Pega o último elemento
             senhaSemEspacos += ultimo * (grau - resto)
 
         criptografado = []
@@ -458,15 +454,14 @@ def cifra():
             # Produto da matriz com vetor agrupamento
             for m in range(grau):
                 produto = sum(matT[m][n] * agrupamento[n] for n in range(grau))
-                produto = produto % 26 
-                if produto == 0: produto = 26 
-                criptografado.append(produto) 
+                produto = produto % 26  # Modular com 26
+                if produto == 0: produto = 26  # Ajusta para que 0 corresponda a 'Z'
+                criptografado.append(produto)  # Armazena o valor criptografado
 
         # Exibir o resultado criptografado
         st.subheader("Resultado Criptografado:")
         resultado = ''.join(chr(c + ord('A') - 1) for c in criptografado)
         st.write(resultado)
-
 
 
 def pagina_polinomios():
