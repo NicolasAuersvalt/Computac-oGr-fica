@@ -421,13 +421,17 @@ def cifra():
     if matriz_input:
         matT = []
         linhas = matriz_input.strip().split('\n')
-        for linha in linhas:
-            matT.append(list(map(int, linha.split())))
-        
-        matT = np.array(matT)
+        try:
+            for linha in linhas:
+                matT.append(list(map(int, linha.split())))
 
-        if matT.shape != (grau, grau):
-            st.error("A matriz deve ser de dimensão {}x{}.".format(grau, grau))
+            matT = np.array(matT)
+
+            if matT.shape != (grau, grau):
+                st.error("A matriz deve ser de dimensão {}x{}.".format(grau, grau))
+                return
+        except ValueError:
+            st.error("Certifique-se de que todos os valores da matriz são números inteiros válidos.")
             return
 
         # Receber a senha
@@ -462,6 +466,7 @@ def cifra():
         st.subheader("Resultado Criptografado:")
         resultado = ''.join(chr(c + ord('A') - 1) for c in criptografado)
         st.write(resultado)
+
 
 
 def pagina_polinomios():
