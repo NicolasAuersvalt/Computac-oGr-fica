@@ -121,7 +121,7 @@ class Polinomio:
         for i in range(self.grau + 1):
             coef = self.v[i]
             if coef == 0:
-                continue  # Ignora coeficientes zero
+                continue 
             sinal = self.sinal[i]
             parte = f"{'' if i == 0 else ('+' if sinal == '+' else '-')}{abs(coef)}"
             if i > 0:
@@ -180,14 +180,10 @@ class Polinomio:
 
 def inicio():
     
-    # Exibir uma imagem a partir de um arquivo local
-    imagem_path = "imagem/coordenada.PNG"  # Substitua pelo caminho da sua imagem
-    imagem_path2 = "imagem/LambdaLabs.png"
+   
+    imagem_path = "imagem/coordenada.PNG"  
 
     st.title("Bem-vindo ao Laboratório Lambda")
-
-    st.image(imagem_path2, width=400)
-    
     st.write("Aqui serão desenvolvidos alguns projetos, fique à vontade para testar!")
     st.markdown("---")
     st.write("""
@@ -442,7 +438,7 @@ def cifra():
 
         # Se não for divisível, preenche com o último caractere
         if resto != 0:
-            ultimo = senhaSemEspacos[-1]  # Pega o último elemento
+            ultimo = senhaSemEspacos[-1]
             senhaSemEspacos += ultimo * (grau - resto)
 
         criptografado = []
@@ -454,9 +450,9 @@ def cifra():
             # Produto da matriz com vetor agrupamento
             for m in range(grau):
                 produto = sum(matT[m][n] * agrupamento[n] for n in range(grau))
-                produto = produto % 26  # Modular com 26
-                if produto == 0: produto = 26  # Ajusta para que 0 corresponda a 'Z'
-                criptografado.append(produto)  # Armazena o valor criptografado
+                produto = produto % 26 
+                if produto == 0: produto = 26 
+                criptografado.append(produto) 
 
         # Exibir o resultado criptografado
         st.subheader("Resultado Criptografado:")
@@ -513,7 +509,7 @@ def pagina_polinomios():
             st.write(f"A aproximação em x={x} é:")
             for key, value in resultado.items():
                 st.write(f"- {key}: {value}")
-                
+
         st.pyplot(plt)
 
 def main():
