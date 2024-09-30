@@ -182,8 +182,12 @@ def inicio():
     
     # Exibir uma imagem a partir de um arquivo local
     imagem_path = "imagem/coordenada.PNG"  # Substitua pelo caminho da sua imagem
+    imagem_path2 = "imagem/LambdaLabs.png"
 
     st.title("Bem-vindo ao Laboratório Lambda")
+
+    st.image(imagem_path2, width=400)
+    
     st.write("Aqui serão desenvolvidos alguns projetos, fique à vontade para testar!")
     st.markdown("---")
     st.write("""
